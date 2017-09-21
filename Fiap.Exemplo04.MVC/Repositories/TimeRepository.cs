@@ -44,7 +44,7 @@ namespace Fiap.Exemplo04.MVC.Repositories
 
         public List<Time> Listar()
         {
-            return _context.Times.ToList();
+            return _context.Times.Include("Tecnico").ToList();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Fiap.Exemplo04.MVC.Models;
 using Fiap.Exemplo04.MVC.Persistencia;
+using Fiap.Exemplo04.MVC.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,19 @@ namespace Fiap.Exemplo04.MVC.Controllers
 {
     public class JogadorController : Controller
     {
-        private FutebolContext _context = new FutebolContext();
+        private UnitOfWork _unit = new UnitOfWork();
 
         [HttpGet]
         public ActionResult Listar()
         {
-            return View(_context.Jogadores.Include("Time").ToList());
+            return View(_unit.JogadorRepository.Listar());
         }
 
         [HttpGet]
         public ActionResult Cadastrar()
         {
             //Buscar todos os times cadastrados
-            var lista = _context.Times.ToList();
+            var lista = _unit.TimeRepository.Listar();
             //Passa os valores para o select da tela
             ViewBag.times = new SelectList(lista, "TimeId", "Nome");
             return View();
@@ -31,8 +32,8 @@ namespace Fiap.Exemplo04.MVC.Controllers
         [HttpPost]
         public ActionResult Cadastrar(Jogador jogador)
         {
-            _context.Jogadores.Add(jogador);
-            _context.SaveChanges();
+            _unit.JogadorRepository.Cadastrar(jogador);
+            _unit.Save();
             TempData["msg"] = "Jogador Cadastrado!";
             return RedirectToAction("Cadastrar");
         }
